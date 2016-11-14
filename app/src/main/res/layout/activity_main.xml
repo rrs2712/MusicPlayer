@@ -10,12 +10,26 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context="com.g53mdp.cw02.musicplayer.MainActivity">
+    tools:context="com.g53mdp.cw02.musicplayer.MainActivity"
+    android:weightSum="1">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Playing:" />
+        android:text="Playlist"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="172dp"
+            android:background="@color/bluegray"
+            android:id="@+id/lv_playlist"/>
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -45,4 +59,5 @@
             android:id="@+id/btn_next"
             android:layout_weight="1" />
     </LinearLayout>
+
 </LinearLayout>
