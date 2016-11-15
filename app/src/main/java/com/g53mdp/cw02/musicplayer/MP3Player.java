@@ -14,6 +14,9 @@ public class MP3Player {
     protected MP3PlayerState state;
     protected String filePath;
 
+    private final String
+            ACT = "Act02 MP3Player";
+
     public enum MP3PlayerState {
         ERROR,
         PLAYING,
@@ -51,6 +54,7 @@ public class MP3Player {
 
         this.state = MP3PlayerState.PLAYING;
         mediaPlayer.start();
+        Log.d(ACT,"Now playing: " + filePath);
     }
 
     public String getFilePath() {
@@ -69,6 +73,7 @@ public class MP3Player {
         if(this.state == MP3PlayerState.PAUSED) {
             mediaPlayer.start();
             this.state = MP3PlayerState.PLAYING;
+            Log.d(ACT,"play pressed");
         }
     }
 
@@ -76,6 +81,7 @@ public class MP3Player {
         if(this.state == MP3PlayerState.PLAYING) {
             mediaPlayer.pause();
             state = MP3PlayerState.PAUSED;
+            Log.d(ACT,"pause pressed");
         }
     }
 
@@ -88,5 +94,6 @@ public class MP3Player {
             mediaPlayer.release();
             mediaPlayer = null;
         }
+        Log.d(ACT,"stop pressed");
     }
 }
