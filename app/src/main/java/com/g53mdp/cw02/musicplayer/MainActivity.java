@@ -1,5 +1,6 @@
 package com.g53mdp.cw02.musicplayer;
 
+import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -62,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
     //LAS
     private void playNewSong(File file){
+        this.startService(new Intent(this,MP3Service.class));
+
         tv_playLs.setText(playlistLabel + file.getName());
 
         lastSelectedSong = file.getAbsolutePath();
@@ -83,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
             case PLAYING:
             case PAUSED:
                 mp3Player.stop();
+                this.stopService(new Intent(this,MP3Service.class));
                 break;
             case STOPPED:
                 break;
