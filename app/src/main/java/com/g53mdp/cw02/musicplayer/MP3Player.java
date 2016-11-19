@@ -15,7 +15,7 @@ public class MP3Player {
     protected String filePath;
 
     private final String
-            ACT = "Act02 MP3Player";
+            ACT = "Act03 MP3Player";
 
     public enum MP3PlayerState {
         ERROR,
