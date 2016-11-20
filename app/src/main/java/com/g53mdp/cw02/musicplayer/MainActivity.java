@@ -14,22 +14,20 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String
-            lastSelectedSong="",
-            playlistLabel="Now playing: ";
+    private String playlistLabel="Now playing: ";
     private final String
             ACT = "Act01 MainActivity",
             MUSIC_PATH = "/Music/",
             MSG_ON_NO_MP3_SELECTED="Select a song";
     private TextView tv_playLs;
-    private MP3Service.MP3ServiceBinder serviceBinder = null;
-
-    static String FILE_ABS_PATH = "file_absolute_path";
+    private MP3Service service;
+    private boolean isBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,22 +36,49 @@ public class MainActivity extends AppCompatActivity {
         Log.d(ACT,"onCreate");
 
         setWidgets();
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d(ACT,"onStart");
+        super.onStart();
 
         Intent i = new Intent(MainActivity.this,MP3Service.class);
+        this.startService(i);
         this.bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(ACT,"onStop");
+        super.onStop();
+
+        if(isBound){
+            unbindService(serviceConnection);
+            isBound=false;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(ACT,"onDestroy");
+        service.createNotification();
+        super.onDestroy();
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d(ACT, "onServiceConnected");
-            serviceBinder = (MP3Service.MP3ServiceBinder) service;
+            MP3Service.MP3ServiceBinder binder = (MP3Service.MP3ServiceBinder) service;
+            MainActivity.this.service = binder.getService();
+            isBound=true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Log.d(ACT,"onServiceDisconnected");
-            serviceBinder = null;
+            isBound=false;
         }
     };
 
@@ -74,69 +99,69 @@ public class MainActivity extends AppCompatActivity {
                                     long mylng) {
                 File selectedFromList =(File) (lv.getItemAtPosition(myItemInt));
 
-                playNewSong(selectedFromList);
+                playNewMP3(selectedFromList);
             }
         });
     }
 
 
-    private void playNewSong(File file){
-        tv_playLs.setText(playlistLabel + file.getName());
-        lastSelectedSong = file.getAbsolutePath();
+    private void playNewMP3(File file){
+        Log.d(ACT,"playNewMP3");
 
-        serviceBinder.onPlayNewSongMP3(lastSelectedSong);
+        if (!isBound){
+            Intent i = new Intent(MainActivity.this,MP3Service.class);
+            this.bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
+        }
+
+        if (service.playNewMP3(file.getAbsolutePath())){
+            tv_playLs.setText(playlistLabel + file.getName());
+        }
     }
 
     public void onStopBtn(View view){
+        Log.d(ACT,"onStopBtn");
+        service.stopMP3();
         onStopGUI();
-        serviceBinder.onStopMP3();
     }
 
+
+
     private void onStopGUI(){
-//        switch (mp3Player.getState()){
-//            case PLAYING:
-//            case PAUSED:
-//                this.stopService(new Intent(this,MP3Service.class));
-//                break;
-//            case STOPPED:
-//                break;
-//            default:
-//                break;
-//        }
+        Log.d(ACT,"onStopGUI");
+
+        switch (service.getState()){
+            case PLAYING:
+            case PAUSED:
+                break;
+            case STOPPED:
+                this.stopService(new Intent(this,MP3Service.class));
+                break;
+            default:
+                break;
+        }
     }
 
     public void onPlayBtn(View view){
+        Log.d(ACT,"onPlayBtn");
+
+        service.playMP3();
         onPlayGUI();
-        serviceBinder.onPlayMP3();
     }
 
     private void onPlayGUI(){
-//        switch (mp3Player.getState()){
-//            case PLAYING:
-//                break;
-//            case PAUSED:
-//                break;
-//            case STOPPED:
-//                if (!lastSelectedSong.equals("")) {
-//                } else {
-//                    tv_playLs.setText(MSG_ON_NO_MP3_SELECTED);
-//                    Toast.makeText(this,MSG_ON_NO_MP3_SELECTED, Toast.LENGTH_SHORT).show();
-//                }
-//                break;
-//            default:
-//                break;
-//        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        if(serviceConnection!=null){
-            unbindService(serviceConnection);
-            serviceConnection = null;
+        switch (service.getState()){
+            case PLAYING:
+                break;
+            case PAUSED:
+                break;
+            case STOPPED:
+                if (service.getLastSong().equals("")) {
+                    tv_playLs.setText(MSG_ON_NO_MP3_SELECTED);
+                    Toast.makeText(this,MSG_ON_NO_MP3_SELECTED, Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                break;
         }
-        super.onDestroy();
-        Log.d(ACT,"onDestroy");
     }
-
-
 }
