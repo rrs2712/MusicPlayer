@@ -49,15 +49,11 @@ public class MP3Service extends Service {
         super.onDestroy();
 
         stopMP3();
-//        if (mp3Player.getState()== MP3Player.MP3PlayerState.STOPPED)
-//        destroyNotification();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(ACT,"onStartCommand");
-
-//        destroyNotification();
 
         return Service.START_STICKY;
     }
@@ -72,7 +68,6 @@ public class MP3Service extends Service {
         Log.d(ACT,"createNotification");
         Intent mainActivity = new Intent(this, MainActivity.class);
         PendingIntent pi = PendingIntent.getActivity(this,0,mainActivity,0);
-//        Resources r = getResources();
 
         File f = new File(mp3Player.getFilePath());
 
@@ -89,12 +84,6 @@ public class MP3Service extends Service {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(0,notification);
     }
-
-//    private void destroyNotification(){
-//        Log.d(ACT,"destroyNotification");
-//        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//        notificationManager.cancel(0);
-//    }
 
     public boolean playNewMP3(String songPath){
         Log.d(ACT,"playNewMP3");
