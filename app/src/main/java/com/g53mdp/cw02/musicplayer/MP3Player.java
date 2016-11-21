@@ -69,6 +69,14 @@ public class MP3Player {
         return 0;
     }
 
+    public int getDuration() {
+        if(mediaPlayer!=null) {
+            if(this.state == MP3PlayerState.PAUSED || this.state == MP3PlayerState.PLAYING)
+                return mediaPlayer.getDuration();
+        }
+        return 0;
+    }
+
     public void play() {
         if(this.state == MP3PlayerState.PAUSED) {
             mediaPlayer.start();

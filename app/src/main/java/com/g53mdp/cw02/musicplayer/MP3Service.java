@@ -18,18 +18,14 @@ public class MP3Service extends Service {
     private final String
             NOTIFICATION_TITLE = "Music Player",
             ACT ="Act02 Service";
-    private final IBinder binder = new MP3ServiceBinder();
-    private final MP3Player mp3Player = new MP3Player();
     private String
             msgLabel="Now playing: ",
             lastSelectedSong="";
+    private final IBinder binder = new MP3ServiceBinder();
+    private final MP3Player mp3Player = new MP3Player();
 
-    public class MP3ServiceBinder extends Binder{
-        MP3Service getService(){
-            // Return this instance to clients
-            return MP3Service.this;
-        }
-    }
+
+    // ## Service lifecycle management ## //
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -58,6 +54,13 @@ public class MP3Service extends Service {
         return Service.START_STICKY;
     }
 
+    // ## Client methods ## //
+
+    /**
+     * Creates a notification with current song info and activity to launch.
+     * Won't disappear on message swiped from the bar, will disappear when
+     * touched instead
+     */
     public void createNotification(){
 
         if (mp3Player.getState()== MP3Player.MP3PlayerState.STOPPED){
@@ -70,12 +73,16 @@ public class MP3Service extends Service {
         PendingIntent pi = PendingIntent.getActivity(this,0,mainActivity,0);
 
         File f = new File(mp3Player.getFilePath());
+        String
+                msg = msgLabel + f.getName(),
+                content = f.getName(),
+                title = NOTIFICATION_TITLE + " (" + mp3Player.getState().name() + ")";
 
         Notification notification = new NotificationCompat.Builder(this)
-                .setTicker(msgLabel + mp3Player.getFilePath())
+                .setTicker(msg)
                 .setSmallIcon(R.drawable.ic_action_playback_play)
-                .setContentTitle(NOTIFICATION_TITLE)
-                .setContentText(msgLabel + f.getName())
+                .setContentTitle(title)
+                .setContentText(content)
                 .setContentIntent(pi)
                 .setAutoCancel(true)
                 .setOngoing(true)
@@ -85,6 +92,11 @@ public class MP3Service extends Service {
         notificationManager.notify(0,notification);
     }
 
+    /**
+     * Wraps mp3 play functionality
+     * @param songPath
+     * @return boolean
+     */
     public boolean playNewMP3(String songPath){
         Log.d(ACT,"playNewMP3");
 
@@ -106,6 +118,9 @@ public class MP3Service extends Service {
         return  reply;
     }
 
+    /**
+     * Wraps mp3 stop functionality
+     */
     public void stopMP3(){
         Log.d(ACT,"stopMP3");
 
@@ -121,6 +136,10 @@ public class MP3Service extends Service {
         }
     }
 
+    /**
+     * Wraps mp3 play functionality and decides what to do when
+     * pause or play needed
+     */
     public void playMP3(){
         Log.d(ACT,"playMP3");
 
@@ -141,17 +160,44 @@ public class MP3Service extends Service {
         }
     }
 
+    /**
+     *Wraps mp3 state
+     * @return current state
+     */
     public MP3Player.MP3PlayerState getState(){
         return mp3Player.getState();
     }
 
+    /**
+     *
+     * @return last played song (path)
+     */
     public String getLastSong(){
         return lastSelectedSong;
     }
 
-    @Override
-    public boolean onUnbind(Intent intent) {
-        Log.d(ACT,"onUnbind");
-        return super.onUnbind(intent);
+    /**
+     * Wraps mp3 progress functionality
+     * @return int progress
+     */
+    public int getMP3Progress(){
+        return mp3Player.getProgress();
+    }
+
+    /**
+     * Wraps mp3 duration functionality
+     * @return int song duration
+     */
+    public int getMP3Duration(){
+        return mp3Player.getDuration();
+    }
+
+    /**
+     * Class to return this instance to clients
+     */
+    public class MP3ServiceBinder extends Binder{
+        MP3Service getService(){
+            return MP3Service.this;
+        }
     }
 }

@@ -18,6 +18,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/tv_playlist"/>
 
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="1"
+        android:id="@+id/seekBar"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,7 +33,7 @@
 
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="172dp"
+            android:layout_height="200dp"
             android:background="@color/bluegray"
             android:id="@+id/lv_playlist"/>
     </LinearLayout>
@@ -48,7 +55,6 @@
             android:onClick="onStopBtn"/>
 
         <Button
-            android:text="@string/btn_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/btn_play"
