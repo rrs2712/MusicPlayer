@@ -35,7 +35,9 @@ public class MainActivity extends AppCompatActivity {
             ACT = "Act01 MainActivity",
             THR = "Act04 ProgressThread",
             MUSIC_PATH = "/Music/",
-            MSG_ON_NO_MP3_SELECTED="Select a song";
+            MSG_ON_NO_MP3_SELECTED="Select a song",
+            NO_DIR_MSG = "No such directory: ",
+            NO_FILE_MSG = "No files in: ";
 
 //    Service
     private MP3Service service;
@@ -147,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (!isBound){
             Intent i = new Intent(MainActivity.this,MP3Service.class);
+            this.startService(i);
             this.bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
         }
 
@@ -168,11 +171,21 @@ public class MainActivity extends AppCompatActivity {
         btn_play.setText("Play");
 
         final ListView lv = (ListView) findViewById(R.id.lv_playlist);
+
         File musicDir = new File(Environment.getExternalStorageDirectory().getPath() + MUSIC_PATH);
+        if(!musicDir.isDirectory()){
+            Log.w(ACT,NO_DIR_MSG + musicDir.getAbsolutePath());
+            Toast.makeText(this,NO_DIR_MSG + musicDir.getAbsolutePath(),Toast.LENGTH_LONG).show();
+            return;
+        }
 
         File list[] = musicDir.listFiles();
-        lv.setAdapter(new ArrayAdapter<File>(this,android.R.layout.simple_list_item_1, list));
+        if (list.length<1){
+            Log.w(ACT,NO_FILE_MSG + musicDir.getAbsolutePath());
+            Toast.makeText(this,NO_FILE_MSG + musicDir.getAbsolutePath(),Toast.LENGTH_LONG).show();
+        }
 
+        lv.setAdapter(new ArrayAdapter<File>(this,android.R.layout.simple_list_item_1, list));
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> myAdapter,
                                     View myView,
