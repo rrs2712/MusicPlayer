@@ -1,0 +1,22 @@
+References:
+
+MP3 Player
+https://github.com/mdf/g53mdp/blob/master/MP3Player/MP3Player.java
+
+Manifest permissions
+https://developer.android.com/guide/topics/manifest/uses-permission-element.html
+
+Royalty free music
+http://www.bensound.com/
+
+Enum methods
+https://docs.oracle.com/javase/7/docs/api/java/lang/Enum.html
+
+Bound Service
+https://developer.android.com/guide/components/bound-services.html
+
+Notifications
+https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#setOngoing(boolean)
+
+Threads
+https://developer.android.com/reference/java/lang/Thread.html
